@@ -45,7 +45,7 @@
       resultDiv.innerHTML = '<p>Loading...</p>';
 
       try {
-        const backendUrl = 'BACKEND_URL'; // Replace with your Render backend URL (e.g., https://etymology-backend.onrender.com)
+        const backendUrl = 'https://etymology-backend.onrender.com'; // Replace with your Render backend URL (e.g., https://etymology-backend.onrender.com)
         const response = await fetch(`${backendUrl}/etymology`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
