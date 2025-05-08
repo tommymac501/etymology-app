@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Etymology App</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+  <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+    <h1 class="text-2xl font-bold text-center mb-4">Word Etymology</h1>
+    <input
+      id="wordInput"
+      type="text"
+      placeholder="Enter a word"
+      class="w-full p-2 mb-4 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+    <button
+      onclick="fetchEtymology()"
+      class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+    >
+      Get Etymology
+    </button>
+    <div id="status" class="mt-4 text-sm text-gray-500 bg-gray-100 p-2 rounded"></div>
+    <div id="result" class="mt-4 text-gray-700"></div>
+  </div>
+
+  <script>
+    function updateStatus(message) {
+      document.getElementById('status').innerText = `Status: ${message}`;
+    }
+
+    async function fetchEtymology() {
+      const word = document.getElementById('wordInput').value.trim().toLowerCase();
+      const resultDiv = document.getElementById('result');
+      
+      updateStatus('Waiting for input');
+      if (!word) {
+        resultDiv.innerHTML = '<p class="text-red-500">Please enter a word.</p>';
+        updateStatus('Error: No word entered');
+        return;
+      }
+
+      updateStatus('Fetching etymology');
+      resultDiv.innerHTML = '<p>Loading...</p>';
+
+      try {
+        const backendUrl = 'BACKEND_URL'; // Replace with your Render backend URL (e.g., https://etymology-backend.onrender.com)
+        const response = await fetch(`${backendUrl}/etymology`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ word })
+        });
+
+        updateStatus('Processing response');
+        const data = await response.json();
+
+        resultDiv.innerHTML = craftStory(word, data.etymology);
+        updateStatus('Displaying result');
+      } catch (error) {
+        updateStatus(`Error: ${error.message}, using fallback`);
+        resultDiv.innerHTML = craftStory(word, 'No etymology data available.');
+      }
+    }
+
+    function craftStory(word, etymology) {
+      if (etymology === 'No etymology data available.') {
+        return `
+          <p>The etymology of <strong>${word}</strong> remains undocumented in available sources. Its origins are likely rooted in historical linguistic developments, but specific details about its formation and early use are not recorded.</p>
+          <p>Despite the lack of precise data, <strong>${word}</strong> has persisted in modern usage, suggesting a gradual integration into the language through cultural or literary transmission. Further research into primary texts or comparative linguistics may yield additional insights.</p>
+        `;
+      }
+
+      return `
+        <p>The word <strong>${word}</strong> originates from ${etymology}. Its initial formation reflects the linguistic and cultural context of its time, serving as a functional or descriptive term within its source language.</p>
+        <p>Over time, <strong>${word}</strong> evolved through contact with other languages and societies, adapting to new phonetic and semantic contexts. Its continued use in contemporary language underscores its enduring relevance and adaptability in communication.</p>
+      `;
+    }
+
+    // Initialize status
+    updateStatus('Waiting for input');
+  </script>
+</body>
+</html>
