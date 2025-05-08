@@ -3,7 +3,7 @@ const cors = require('cors');
 const fetch = require('node-fetch');
 const app = express();
 
-app.use(cors({ origin: '*' })); // Allow requests from frontend (update with specific frontend URL in production)
+app.use(cors({ origin: 'https://etymology-frontend.onrender.com' })); // Allow requests from frontend (update with specific frontend URL in production)
 app.use(express.json());
 
 // Simulated local etymology dictionary for fallback
